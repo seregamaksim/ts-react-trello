@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
 
 export default function ModalCard(props: {
-  dataCard: any;
+  dataCard: {
+    id: number;
+    title: string;
+    columnTitle: string;
+  } | null;
   isOpen: boolean;
   setIsOpenCard: (arg: boolean) => void;
 }) {
@@ -13,12 +17,19 @@ export default function ModalCard(props: {
         props.setIsOpenCard(false);
       }
     };
+
     window.addEventListener('keydown', closeModal);
     return () => window.removeEventListener('keydown', closeModal);
   }, []);
+
   return (
     <div className={props.isOpen ? 'modal active' : 'modal'}>
-      <div className="modal__wrapper">{props.dataCard.title}</div>
+      <div className="modal__wrapper">
+        <div>
+          <h2>{props.dataCard?.title}</h2>
+          <p>{`Inside a column ${props.dataCard?.columnTitle}`}</p>
+        </div>
+      </div>
     </div>
   );
 }

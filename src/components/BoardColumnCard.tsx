@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { TColumnCard } from './BoardColumn';
+import { TCard } from './BoardColumn';
 
 type TBoardColumnCardProps = {
   data: {
     id: number;
     title: string;
-    columnId: number;
+    columnTitle: string;
   };
   removeCard: (id: number) => void;
-  setDataCardModal: (data: TColumnCard) => void;
+  setDataCardModal: (data: TCard) => void;
   openCardModal: (arg: boolean) => void;
   className?: string;
 };

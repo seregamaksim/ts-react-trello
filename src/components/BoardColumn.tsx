@@ -6,10 +6,10 @@ export type TColumnCard = {
   id: number;
   title: string;
 };
-type TCard = {
+export type TCard = {
   id: number;
   title: string;
-  columnId: number;
+  columnTitle: string;
 };
 const BoardColumnItem = styled.li`
   padding: 10px;
@@ -43,7 +43,7 @@ const StyledBoardColumnCard = styled(BoardColumnCard)`
 export default function BoardColumn(props: {
   data: TColumnCard;
   removeColumn: (id: number) => void;
-  setDataCardModal: (data: TColumnCard) => void;
+  setDataCardModal: (data: TCard) => void;
   openCardModal: (arg: boolean) => void;
   className?: string;
 }) {
@@ -57,7 +57,7 @@ export default function BoardColumn(props: {
       cards.concat({
         id: Date.now(),
         title: newCardValue,
-        columnId: props.data.id,
+        columnTitle: props.data.title,
       })
     );
     setNewCardValue('');

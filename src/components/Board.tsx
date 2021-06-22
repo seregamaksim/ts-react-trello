@@ -12,13 +12,16 @@ type TBoardColumnInterface = {
 export type TCard = {
   id: number;
   title: string;
+  columnTitle: string;
 };
+
 const initialState = [
   { id: 0, title: 'TODO' },
   { id: 1, title: 'In Progress' },
   { id: 2, title: 'Testing' },
   { id: 3, title: 'Done' },
 ];
+
 const BoardWrap = styled.div`
   display: flex;
   padding: 15px;
@@ -76,9 +79,9 @@ export default function Board() {
       <AddColumnBtn addHandle={setBoardColumns} />
 
       <ModalCard
+        dataCard={dataCard}
         setIsOpenCard={setIsOpenCard}
         isOpen={isOpenCard}
-        dataCard={dataCard}
       />
     </BoardWrap>
   );
