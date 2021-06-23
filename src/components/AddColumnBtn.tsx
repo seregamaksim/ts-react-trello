@@ -1,5 +1,61 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { TBoardColumn } from '../App';
+
+// type TBoardColumn = {
+//   id: number;
+//   title: string;
+// };
+
+type TAddColumnProps = {
+  addHandle: (data: TBoardColumn) => void;
+};
+
+export default function AddColumnBtn(props: TAddColumnProps) {
+  const [columnTitle, setColumnTitle] = useState('');
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
+
+  function addColumn(e: React.SyntheticEvent): void {
+    e.preventDefault();
+    if (columnTitle.length > 0) {
+      props.addHandle({ id: Date.now(), title: columnTitle });
+      setColumnTitle('');
+    }
+  }
+
+  return (
+    <AddColumnWrapper>
+      <AddColumnButton
+        onClick={() => {
+          setIsOpenPopup(true);
+        }}
+      >
+        Add one more column
+      </AddColumnButton>
+      {isOpenPopup && (
+        <AddColumnPopup isOpenPopup={isOpenPopup}>
+          <AddColumnPopupClose
+            onClick={() => {
+              setIsOpenPopup(false);
+            }}
+          >
+            X
+          </AddColumnPopupClose>
+          <AddColumnPopupForm onSubmit={addColumn}>
+            <AddColumnPopupInput
+              type="text"
+              name="column-title"
+              placeholder="Enter column name"
+              value={columnTitle}
+              onChange={(e) => setColumnTitle(e.target.value)}
+            />
+            <AddColumnPopupBtn>Add column</AddColumnPopupBtn>
+          </AddColumnPopupForm>
+        </AddColumnPopup>
+      )}
+    </AddColumnWrapper>
+  );
+}
 
 const AddColumnWrapper = styled.div`
   position: relative;
@@ -49,49 +105,3 @@ const AddColumnPopupBtn = styled.button`
   padding: 5px 10px;
   color: var(--white);
 `;
-
-export default function AddColumnBtn(props: { addHandle: any }) {
-  const [columnTitle, setColumnTitle] = useState<string>('');
-  const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
-
-  function addColumn(e: React.SyntheticEvent): void {
-    e.preventDefault();
-    props.addHandle((prevBoardColumns: object[]) =>
-      prevBoardColumns.concat({ id: Date.now(), title: columnTitle })
-    );
-    setColumnTitle('');
-  }
-
-  return (
-    <AddColumnWrapper>
-      <AddColumnButton
-        onClick={() => {
-          setIsOpenPopup(true);
-        }}
-      >
-        Add one more column
-      </AddColumnButton>
-      {isOpenPopup && (
-        <AddColumnPopup isOpenPopup={isOpenPopup}>
-          <AddColumnPopupClose
-            onClick={() => {
-              setIsOpenPopup(false);
-            }}
-          >
-            X
-          </AddColumnPopupClose>
-          <AddColumnPopupForm onSubmit={addColumn}>
-            <AddColumnPopupInput
-              type="text"
-              name="column-title"
-              placeholder="Enter column name"
-              value={columnTitle}
-              onChange={(e) => setColumnTitle(e.target.value)}
-            />
-            <AddColumnPopupBtn>Add column</AddColumnPopupBtn>
-          </AddColumnPopupForm>
-        </AddColumnPopup>
-      )}
-    </AddColumnWrapper>
-  );
-}
