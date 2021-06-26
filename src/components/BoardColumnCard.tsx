@@ -1,24 +1,26 @@
-import { useState } from 'react';
 import styled from 'styled-components';
-import { TCard } from '../App';
+import { TCard, TComment } from '../App';
 
 type TBoardColumnCardProps = {
   data: TCard;
   removeCard: (id: number) => void;
-  // setDataCardModal: (data: TCard) => void;
-  // openCardModal: (arg: boolean) => void;
+  openModal: (arg: boolean) => void;
+  setDataCardModal: (data: TCard) => void;
+  getCommentsById: (id: number) => TComment[];
   className?: string;
 };
 
 export default function BoardColumnCard(props: TBoardColumnCardProps) {
-  const [commentCount, setCommentCount] = useState(0);
+  const commentsCount = props.getCommentsById(props.data.id).length;
+  function openModal() {
+    props.openModal(true);
+    props.setDataCardModal(props.data)
+    document.body.style.overflow = 'hidden';
+  }
   return (
     <CardItem className={props.className}>
       <CardItemLink
-        onClick={() => {
-          // props.setDataCardModal(props.data);
-          // props.openCardModal(true);
-        }}
+        onClick={openModal}
       ></CardItemLink>
       <CardItemRemove onClick={() => props.removeCard(props.data.id)}>
         X
@@ -28,7 +30,7 @@ export default function BoardColumnCard(props: TBoardColumnCardProps) {
       </CardItemTitleWrap>
       <CardItemInfoWrap>
         <CardItemInfoElem>
-          💬 <span>{commentCount}</span>
+          💬 <span>{commentsCount}</span>
         </CardItemInfoElem>
       </CardItemInfoWrap>
     </CardItem>

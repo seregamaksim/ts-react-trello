@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import BoardColumn from './BoardColumn';
 import AddColumnBtn from './AddColumnBtn';
 import styled from 'styled-components';
-import { TBoardColumn, TCard } from '../App';
+import { TBoardColumn, TCard, TComment } from '../App';
 
 type TBoardProps = {
   boardColumns: TBoardColumn[];
@@ -11,6 +10,9 @@ type TBoardProps = {
   removeColumn: (id: number) => void;
   removeCard: (id: number) => void;
   getCardsByIdColumn: (id: number) => TCard[];
+  openModal: (arg: boolean) => void;
+  setDataCard: (data: TCard) => void;
+  getCommentsById: (id: number) => TComment[];
 };
 
 export default function Board(props: TBoardProps) {
@@ -27,7 +29,9 @@ export default function Board(props: TBoardProps) {
                 getCardsByIdColumn={props.getCardsByIdColumn}
                 addCard={props.addCard}
                 removeCard={props.removeCard}
-                // setDataCardModal={setDataCard}
+                openModal={props.openModal}
+                setDataCardModal={props.setDataCard}
+                getCommentsById={props.getCommentsById}
                 // openCardModal={setIsOpenCard}
               />
             );
