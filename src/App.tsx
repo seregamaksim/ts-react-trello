@@ -16,7 +16,7 @@ export type TComment = {
   id: number;
   body: string;
   cardId: number;
-}
+};
 
 const initialStateColumns = [
   { id: 0, title: 'TODO' },
@@ -25,7 +25,7 @@ const initialStateColumns = [
   { id: 3, title: 'Done' },
 ];
 
-function App() {
+export default function App() {
   const [userName, setUserName] = useState('');
   const localUserName = localStorage.getItem('userName') || userName;
   // const localBoardColumns = JSON.parse(
@@ -75,6 +75,15 @@ function App() {
     const neededComments = comments.filter((item) => item.cardId === id);
     return neededComments;
   }
+  function renameColumn(id: number, title: string): void {
+    let newBoardColumns = [...boardColumns];
+    newBoardColumns.forEach((item) => {
+      if (item.id === id) {
+        item.title = title;
+      }
+    });
+    setBoardColumns(newBoardColumns);
+  }
   useEffect(() => {
     const closeModal = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -100,6 +109,7 @@ function App() {
         openModal={setIsOpenCard}
         setDataCard={setDataCard}
         getCommentsById={getCommentsById}
+        renameColumn={renameColumn}
       />
       <ModalCard
         dataCard={dataCard}
@@ -113,5 +123,3 @@ function App() {
     </>
   );
 }
-
-export default App;

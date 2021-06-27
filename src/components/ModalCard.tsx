@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
-import { TCard, TComment } from '../App'
+import { TCard, TComment } from '../App';
 
-export default function ModalCard(props: {
+interface IModalCardProps {
   dataCard: TCard | null;
   isOpen: boolean;
   userName: string;
@@ -9,25 +9,25 @@ export default function ModalCard(props: {
   addComment: (data: TComment) => void;
   getCommentsById: (id: number) => TComment[];
   removeComment: (id: number) => void;
-}) {
-  const [commentVal, setCommentVal] = useState('');
- 
+}
 
+export default function ModalCard(props: IModalCardProps) {
+  const [commentVal, setCommentVal] = useState('');
 
   function submitComment(e: FormEvent) {
     e.preventDefault();
-    if(commentVal.length > 0) {
-      if(props.dataCard) {
+    if (commentVal.length > 0) {
+      if (props.dataCard) {
         props.addComment({
           id: Date.now(),
           body: commentVal,
-          cardId: props.dataCard.id
-        })
+          cardId: props.dataCard.id,
+        });
       }
       setCommentVal('');
     }
   }
-  if(props.dataCard && props.isOpen) {
+  if (props.dataCard && props.isOpen) {
     const comments = props.getCommentsById(props.dataCard.id);
 
     return (
@@ -36,10 +36,14 @@ export default function ModalCard(props: {
           <div>
             <h2>{props.dataCard.title}</h2>
             <p>{`Inside a column ${props.dataCard.columnId}`}</p>
-            <button onClick={() => {
-              document.body.style.overflow = '';
-              props.setIsOpenCard(false)
-              }}>X</button>
+            <button
+              onClick={() => {
+                document.body.style.overflow = '';
+                props.setIsOpenCard(false);
+              }}
+            >
+              X
+            </button>
           </div>
           <hr />
           <div>
@@ -48,22 +52,27 @@ export default function ModalCard(props: {
           <hr />
           <div>
             <p>Comments:</p>
-              <ul>
-                {
-                  comments.map((item) => {
-                    return (
-                      <li key={item.id}>
-                        <p>{item.body}</p>
-                        <p>Author: {props.userName}</p>
-                        <button onClick={() => props.removeComment(item.id)}>X</button>
-                      </li>
-                    )
-                  })
-                }
-              </ul>
+            <ul>
+              {comments.map((item) => {
+                return (
+                  <li key={item.id}>
+                    <p>{item.body}</p>
+                    <p>Author: {props.userName}</p>
+                    <button onClick={() => props.removeComment(item.id)}>
+                      X
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
             <div>
               <form onSubmit={submitComment}>
-                <input type="text" name="comment" value={commentVal} onChange={(e) => setCommentVal(e.target.value)} />
+                <input
+                  type="text"
+                  name="comment"
+                  value={commentVal}
+                  onChange={(e) => setCommentVal(e.target.value)}
+                />
                 <button>Add comment</button>
               </form>
             </div>
@@ -74,5 +83,4 @@ export default function ModalCard(props: {
   } else {
     return null;
   }
-  
 }

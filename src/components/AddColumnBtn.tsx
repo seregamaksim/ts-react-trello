@@ -2,16 +2,11 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { TBoardColumn } from '../App';
 
-// type TBoardColumn = {
-//   id: number;
-//   title: string;
-// };
-
-type TAddColumnProps = {
+interface IAddColumnProps {
   addHandle: (data: TBoardColumn) => void;
-};
+}
 
-export default function AddColumnBtn(props: TAddColumnProps) {
+export default function AddColumnBtn(props: IAddColumnProps) {
   const [columnTitle, setColumnTitle] = useState('');
   const [isOpenPopup, setIsOpenPopup] = useState(false);
 

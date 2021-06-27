@@ -3,7 +3,7 @@ import AddColumnBtn from './AddColumnBtn';
 import styled from 'styled-components';
 import { TBoardColumn, TCard, TComment } from '../App';
 
-type TBoardProps = {
+interface IBoardProps {
   boardColumns: TBoardColumn[];
   addColumn: (data: TBoardColumn) => void;
   addCard: (data: TCard) => void;
@@ -13,9 +13,10 @@ type TBoardProps = {
   openModal: (arg: boolean) => void;
   setDataCard: (data: TCard) => void;
   getCommentsById: (id: number) => TComment[];
-};
+  renameColumn: (id: number, title: string) => void;
+}
 
-export default function Board(props: TBoardProps) {
+export default function Board(props: IBoardProps) {
   return (
     <BoardWrap>
       <BoardColumns>
@@ -32,7 +33,7 @@ export default function Board(props: TBoardProps) {
                 openModal={props.openModal}
                 setDataCardModal={props.setDataCard}
                 getCommentsById={props.getCommentsById}
-                // openCardModal={setIsOpenCard}
+                renameColumn={props.renameColumn}
               />
             );
           })}

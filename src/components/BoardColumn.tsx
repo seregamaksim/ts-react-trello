@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import BoardColumnCard from './BoardColumnCard';
 import { TBoardColumn, TCard, TComment } from '../App';
 
-export default function BoardColumn(props: {
+interface IBoardColumnProps {
   data: TBoardColumn;
   removeColumn: (id: number) => void;
   addCard: (data: TCard) => void;
@@ -12,13 +12,16 @@ export default function BoardColumn(props: {
   openModal: (arg: boolean) => void;
   setDataCardModal: (data: TCard) => void;
   getCommentsById: (id: number) => TComment[];
-  // openCardModal: (arg: boolean) => void;
+  renameColumn: (id: number, title: string) => void;
   className?: string;
-}) {
-  // const [cards, setCards] = useState<TCard[]>([]);
+}
+
+export default function BoardColumn(props: IBoardColumnProps) {
   const cardsCurrentColumn = props.getCardsByIdColumn(props.data.id);
   const [newCardValue, setNewCardValue] = useState('');
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
+  const [newCardTitle, setNewCardTitle] = useState(props.data.title);
+  const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   function addNewCard(e: React.SyntheticEvent): void {
     e.preventDefault();
@@ -31,15 +34,33 @@ export default function BoardColumn(props: {
       setNewCardValue('');
     }
   }
-  // function removeCard(id: number) {
-  //   let newCards = cards.filter((item) => item.id !== id);
-  //   setCards(newCards);
-  // }
   return (
     <BoardColumnItem className={props.className}>
       <div>
         <BoardColumnHeader>
           <BoardColumnTitle>{props.data.title}</BoardColumnTitle>
+          <BoardColumnTitleTextarea
+            rows={1}
+            value={newCardTitle}
+            ref={titleTextareaRef}
+            onChange={(e) => setNewCardTitle(e.target.value)}
+            onBlur={(e) => {
+              if (newCardTitle !== props.data.title) {
+                props.renameColumn(props.data.id, newCardTitle);
+              }
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (newCardTitle !== props.data.title) {
+                  props.renameColumn(props.data.id, newCardTitle);
+                  if (titleTextareaRef.current) {
+                    titleTextareaRef.current.blur();
+                  }
+                }
+              }
+            }}
+          />
           <button onClick={() => props.removeColumn(props.data.id)}>X</button>
         </BoardColumnHeader>
         <BoardColumnCardsList>
@@ -51,7 +72,6 @@ export default function BoardColumn(props: {
               openModal={props.openModal}
               setDataCardModal={props.setDataCardModal}
               getCommentsById={props.getCommentsById}
-              // openCardModal={props.openCardModal}
             />
           ))}
         </BoardColumnCardsList>
@@ -101,6 +121,7 @@ const BoardColumnHeader = styled.header`
 `;
 const BoardColumnTitle = styled.h2`
   font-size: 18px;
+  display: none;
 `;
 const BoardColumnFormInput = styled.input`
   display: block;
@@ -114,5 +135,19 @@ const StyledBoardColumnCard = styled(BoardColumnCard)`
   margin-bottom: 8px;
   &:last-child {
     margin-bottom: 0;
+  }
+`;
+const BoardColumnTitleTextarea = styled.textarea`
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.2;
+  background: transparent;
+  border: 0;
+  resize: none;
+
+  &:focus {
+    border: 1px solid var(--lightgray);
+    background-color: var(--white);
   }
 `;

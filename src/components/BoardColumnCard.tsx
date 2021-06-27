@@ -1,27 +1,25 @@
 import styled from 'styled-components';
 import { TCard, TComment } from '../App';
 
-type TBoardColumnCardProps = {
+interface IBoardColumnCardProps {
   data: TCard;
   removeCard: (id: number) => void;
   openModal: (arg: boolean) => void;
   setDataCardModal: (data: TCard) => void;
   getCommentsById: (id: number) => TComment[];
   className?: string;
-};
+}
 
-export default function BoardColumnCard(props: TBoardColumnCardProps) {
+export default function BoardColumnCard(props: IBoardColumnCardProps) {
   const commentsCount = props.getCommentsById(props.data.id).length;
   function openModal() {
     props.openModal(true);
-    props.setDataCardModal(props.data)
+    props.setDataCardModal(props.data);
     document.body.style.overflow = 'hidden';
   }
   return (
     <CardItem className={props.className}>
-      <CardItemLink
-        onClick={openModal}
-      ></CardItemLink>
+      <CardItemLink onClick={openModal}></CardItemLink>
       <CardItemRemove onClick={() => props.removeCard(props.data.id)}>
         X
       </CardItemRemove>

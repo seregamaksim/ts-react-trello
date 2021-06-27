@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 
-export default function LoginModal(props: {
+interface ILoginModalProps {
   setUserName: (val: string) => void;
-}) {
+}
+
+export default function LoginModal(props: ILoginModalProps) {
   const [inputNameVal, setInputNameVal] = useState<string>('');
 
   function submitForm(e: React.SyntheticEvent): void {
