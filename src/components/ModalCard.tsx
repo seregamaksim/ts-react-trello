@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { TCard, TComment } from '../App';
 
 interface IModalCardProps {
@@ -9,10 +9,12 @@ interface IModalCardProps {
   addComment: (data: TComment) => void;
   getCommentsById: (id: number) => TComment[];
   removeComment: (id: number) => void;
+  renameCard: (id: number, title: string) => void;
 }
 
 export default function ModalCard(props: IModalCardProps) {
   const [commentVal, setCommentVal] = useState('');
+  const [newTitleVal, setNewTitleVal] = useState('');
 
   function submitComment(e: FormEvent) {
     e.preventDefault();
@@ -35,6 +37,15 @@ export default function ModalCard(props: IModalCardProps) {
         <div className="modal__wrapper">
           <div>
             <h2>{props.dataCard.title}</h2>
+            <textarea
+              value={newTitleVal}
+              name=""
+              id=""
+              rows={1}
+              onChange={(e) => {
+                setNewTitleVal(e.target.value);
+              }}
+            ></textarea>
             <p>{`Inside a column ${props.dataCard.columnId}`}</p>
             <button
               onClick={() => {

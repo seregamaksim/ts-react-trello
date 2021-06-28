@@ -84,6 +84,15 @@ export default function App() {
     });
     setBoardColumns(newBoardColumns);
   }
+  function renameCard(id: number, title: string) {
+    let newCards = [...cards];
+    newCards.forEach((item) => {
+      if (item.id === id) {
+        item.title = title;
+      }
+    });
+    setCards(newCards);
+  }
   useEffect(() => {
     const closeModal = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -111,15 +120,18 @@ export default function App() {
         getCommentsById={getCommentsById}
         renameColumn={renameColumn}
       />
-      <ModalCard
-        dataCard={dataCard}
-        setIsOpenCard={setIsOpenCard}
-        isOpen={isOpenCard}
-        addComment={addComment}
-        getCommentsById={getCommentsById}
-        removeComment={removeComment}
-        userName={localUserName}
-      />
+      {dataCard && (
+        <ModalCard
+          dataCard={dataCard}
+          setIsOpenCard={setIsOpenCard}
+          isOpen={isOpenCard}
+          addComment={addComment}
+          getCommentsById={getCommentsById}
+          removeComment={removeComment}
+          userName={localUserName}
+          renameCard={renameCard}
+        />
+      )}
     </>
   );
 }
