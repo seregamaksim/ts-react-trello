@@ -1,4 +1,11 @@
-import { FormEvent, useEffect, useState } from 'react';
+import React, {
+  FormEvent,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import styled from 'styled-components';
 import { TCard, TComment } from '../App';
 
 interface IModalCardProps {
@@ -14,7 +21,10 @@ interface IModalCardProps {
 
 export default function ModalCard(props: IModalCardProps) {
   const [commentVal, setCommentVal] = useState('');
-  const [newTitleVal, setNewTitleVal] = useState('');
+  const [newCardTitle, setNewCardTitle] = useState('');
+  const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  console.log('newCardTitle', newCardTitle);
 
   function submitComment(e: FormEvent) {
     e.preventDefault();
@@ -29,23 +39,58 @@ export default function ModalCard(props: IModalCardProps) {
       setCommentVal('');
     }
   }
+  function onBlurHandler(e: React.SyntheticEvent) {
+    if (props.dataCard) {
+      if (newCardTitle.length === 0) {
+        if (titleTextareaRef.current) {
+          titleTextareaRef.current.focus();
+        }
+        return false;
+      }
+      if (newCardTitle !== props.dataCard.title && newCardTitle.length !== 0) {
+        props.renameCard(props.dataCard.id, newCardTitle);
+      }
+    }
+  }
+  function onKeyHandler(e: KeyboardEvent) {
+    if (e.key === 'Enter' && props.dataCard) {
+      e.preventDefault();
+      if (newCardTitle.length === 0) {
+        if (titleTextareaRef.current) {
+          titleTextareaRef.current.focus();
+        }
+        return false;
+      }
+      if (newCardTitle !== props.dataCard.title) {
+        props.renameCard(props.dataCard.id, newCardTitle);
+        if (titleTextareaRef.current) {
+          titleTextareaRef.current.blur();
+        }
+      } else {
+        if (titleTextareaRef.current) {
+          titleTextareaRef.current.blur();
+        }
+      }
+    }
+  }
   if (props.dataCard && props.isOpen) {
     const comments = props.getCommentsById(props.dataCard.id);
-
     return (
       <div className={props.isOpen ? 'modal active' : 'modal'}>
         <div className="modal__wrapper">
           <div>
-            <h2>{props.dataCard.title}</h2>
-            <textarea
-              value={newTitleVal}
+            <ModalCardTitle>{props.dataCard.title}</ModalCardTitle>
+            <ModalCardTitleTextarea
+              value={newCardTitle}
               name=""
-              id=""
               rows={1}
+              ref={titleTextareaRef}
               onChange={(e) => {
-                setNewTitleVal(e.target.value);
+                setNewCardTitle(e.target.value);
               }}
-            ></textarea>
+              onBlur={onBlurHandler}
+              onKeyPress={onKeyHandler}
+            />
             <p>{`Inside a column ${props.dataCard.columnId}`}</p>
             <button
               onClick={() => {
@@ -95,3 +140,21 @@ export default function ModalCard(props: IModalCardProps) {
     return null;
   }
 }
+
+const ModalCardTitle = styled.h2`
+  display: none;
+`;
+const ModalCardTitleTextarea = styled.textarea`
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.2;
+  background: transparent;
+  border: 0;
+  resize: none;
+
+  &:focus {
+    border: 1px solid var(--lightgray);
+    background-color: var(--white);
+  }
+`;

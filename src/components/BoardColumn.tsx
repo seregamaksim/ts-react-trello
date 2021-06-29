@@ -20,7 +20,7 @@ export default function BoardColumn(props: IBoardColumnProps) {
   const cardsCurrentColumn = props.getCardsByIdColumn(props.data.id);
   const [newCardValue, setNewCardValue] = useState('');
   const [isAddCardPopupOpen, setIsAddCardPopupOpen] = useState(false);
-  const [newCardTitle, setNewCardTitle] = useState(props.data.title);
+  const [newColumnTitle, setNewColumnTitle] = useState(props.data.title);
   const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
 
   function addNewCard(e: React.SyntheticEvent): void {
@@ -34,6 +34,7 @@ export default function BoardColumn(props: IBoardColumnProps) {
       setNewCardValue('');
     }
   }
+
   return (
     <BoardColumnItem className={props.className}>
       <div>
@@ -41,19 +42,38 @@ export default function BoardColumn(props: IBoardColumnProps) {
           <BoardColumnTitle>{props.data.title}</BoardColumnTitle>
           <BoardColumnTitleTextarea
             rows={1}
-            value={newCardTitle}
+            value={newColumnTitle}
             ref={titleTextareaRef}
-            onChange={(e) => setNewCardTitle(e.target.value)}
+            onChange={(e) => setNewColumnTitle(e.target.value)}
             onBlur={(e) => {
-              if (newCardTitle !== props.data.title) {
-                props.renameColumn(props.data.id, newCardTitle);
+              if (newColumnTitle.length === 0) {
+                if (titleTextareaRef.current) {
+                  titleTextareaRef.current.focus();
+                }
+                return false;
+              }
+              if (
+                newColumnTitle !== props.data.title &&
+                newColumnTitle.length !== 0
+              ) {
+                props.renameColumn(props.data.id, newColumnTitle);
               }
             }}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
-                if (newCardTitle !== props.data.title) {
-                  props.renameColumn(props.data.id, newCardTitle);
+                if (newColumnTitle.length === 0) {
+                  if (titleTextareaRef.current) {
+                    titleTextareaRef.current.focus();
+                  }
+                  return false;
+                }
+                if (newColumnTitle !== props.data.title) {
+                  props.renameColumn(props.data.id, newColumnTitle);
+                  if (titleTextareaRef.current) {
+                    titleTextareaRef.current.blur();
+                  }
+                } else {
                   if (titleTextareaRef.current) {
                     titleTextareaRef.current.blur();
                   }

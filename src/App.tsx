@@ -38,7 +38,11 @@ export default function App() {
     useState<TBoardColumn[]>(initialStateColumns);
   const [cards, setCards] = useState<TCard[]>([]);
   const [isOpenCard, setIsOpenCard] = useState(false);
-  const [dataCard, setDataCard] = useState<TCard | null>(null);
+  const [dataCard, setDataCard] = useState<TCard>({
+    id: 0,
+    title: 'init',
+    columnId: 0,
+  });
   const [comments, setComments] = useState<TComment[]>([]);
 
   // localStorage.setItem('boardColumns', JSON.stringify(boardColumns));
@@ -120,18 +124,17 @@ export default function App() {
         getCommentsById={getCommentsById}
         renameColumn={renameColumn}
       />
-      {dataCard && (
-        <ModalCard
-          dataCard={dataCard}
-          setIsOpenCard={setIsOpenCard}
-          isOpen={isOpenCard}
-          addComment={addComment}
-          getCommentsById={getCommentsById}
-          removeComment={removeComment}
-          userName={localUserName}
-          renameCard={renameCard}
-        />
-      )}
+
+      <ModalCard
+        dataCard={dataCard}
+        setIsOpenCard={setIsOpenCard}
+        isOpen={isOpenCard}
+        addComment={addComment}
+        getCommentsById={getCommentsById}
+        removeComment={removeComment}
+        userName={localUserName}
+        renameCard={renameCard}
+      />
     </>
   );
 }
