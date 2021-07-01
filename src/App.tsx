@@ -7,12 +7,18 @@ export type TBoardColumn = {
   id: number;
   title: string;
 };
+
 export type TCard = {
   id: number;
   title: string;
   columnId: number;
 };
 export type TComment = {
+  id: number;
+  body: string;
+  cardId: number;
+};
+export type TDescription = {
   id: number;
   body: string;
   cardId: number;
@@ -38,23 +44,25 @@ export default function App() {
     useState<TBoardColumn[]>(initialStateColumns);
   const [cards, setCards] = useState<TCard[]>([]);
   const [isOpenCard, setIsOpenCard] = useState(false);
-  const [dataCard, setDataCard] = useState<TCard>({
-    id: 0,
-    title: 'init',
-    columnId: 0,
-  });
+  const [dataCard, setDataCard] = useState<TCard | null>(null);
   const [comments, setComments] = useState<TComment[]>([]);
+  const [descriptions, setDescriptions] = useState<TDescription[]>([]);
 
   // localStorage.setItem('boardColumns', JSON.stringify(boardColumns));
 
-  function removeColumn(id: number): void {
-    const newColumns = boardColumns.filter((item) => item.id !== id);
-    setBoardColumns(newColumns);
-  }
   function addColumn(data: TBoardColumn): void {
     const newColumns = boardColumns.concat(data);
     setBoardColumns(newColumns);
   }
+  function removeColumn(id: number): void {
+    const newColumns = boardColumns.filter((item) => item.id !== id);
+    setBoardColumns(newColumns);
+  }
+  function getColumnById(id: number): TBoardColumn | any {
+    const neededColumn = boardColumns.find((item) => item.id === id);
+    return neededColumn;
+  }
+
   function removeCard(id: number): void {
     let newCards = cards.filter((item) => item.id !== id);
     setCards(newCards);
@@ -73,6 +81,15 @@ export default function App() {
   }
   function removeComment(id: number): void {
     const newComments = comments.filter((item) => item.id !== id);
+    setComments(newComments);
+  }
+  function changeComment(id: number, body: string): void {
+    let newComments = [...comments];
+    newComments.forEach((item) => {
+      if (item.id === id) {
+        item.body = body;
+      }
+    });
     setComments(newComments);
   }
   function getCommentsById(id: number): TComment[] {
@@ -96,6 +113,27 @@ export default function App() {
       }
     });
     setCards(newCards);
+  }
+  function addDescription(description: TDescription): void {
+    const newDescriptions = descriptions.concat(description);
+    setDescriptions(newDescriptions);
+  }
+  function removeDescription(id: number): void {
+    const newDescriptions = descriptions.filter((item) => item.id !== id);
+    setDescriptions(newDescriptions);
+  }
+  function getDescriptionById(id: number): TDescription | any {
+    const neededDescription = descriptions.find((item) => item.cardId === id);
+    return neededDescription;
+  }
+  function changeDescription(id: number, body: string): void {
+    let newDescriptions = [...descriptions];
+    newDescriptions.forEach((item) => {
+      if (item.id === id) {
+        item.body = body;
+      }
+    });
+    setDescriptions(newDescriptions);
   }
   useEffect(() => {
     const closeModal = (e: KeyboardEvent) => {
@@ -124,17 +162,24 @@ export default function App() {
         getCommentsById={getCommentsById}
         renameColumn={renameColumn}
       />
-
-      <ModalCard
-        dataCard={dataCard}
-        setIsOpenCard={setIsOpenCard}
-        isOpen={isOpenCard}
-        addComment={addComment}
-        getCommentsById={getCommentsById}
-        removeComment={removeComment}
-        userName={localUserName}
-        renameCard={renameCard}
-      />
+      {isOpenCard && dataCard && (
+        <ModalCard
+          dataCard={dataCard}
+          setIsOpenCard={setIsOpenCard}
+          isOpen={isOpenCard}
+          addComment={addComment}
+          getCommentsById={getCommentsById}
+          removeComment={removeComment}
+          userName={localUserName}
+          renameCard={renameCard}
+          changeComment={changeComment}
+          addDescription={addDescription}
+          removeDescription={removeDescription}
+          getDescriptionById={getDescriptionById}
+          getColumnById={getColumnById}
+          changeDescription={changeDescription}
+        />
+      )}
     </>
   );
 }

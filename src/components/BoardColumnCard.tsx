@@ -14,6 +14,7 @@ export default function BoardColumnCard(props: IBoardColumnCardProps) {
   const commentsCount = props.getCommentsById(props.data.id).length;
   function openModal() {
     props.setDataCardModal(props.data);
+
     props.openModal(true);
     document.body.style.overflow = 'hidden';
   }

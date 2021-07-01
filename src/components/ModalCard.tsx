@@ -1,15 +1,14 @@
-import React, {
-  FormEvent,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { FormEvent, useState } from 'react';
 import styled from 'styled-components';
-import { TCard, TComment } from '../App';
+import { TBoardColumn, TCard, TComment, TDescription } from '../App';
+import ModalCardTitle from './ModalCardTitle';
+import Comment from './Comment';
+import Description from './Description';
+import AddForm from './AddForm';
+import isEmpty from '../helpers/isEmpty';
 
 interface IModalCardProps {
-  dataCard: TCard | null;
+  dataCard: TCard;
   isOpen: boolean;
   userName: string;
   setIsOpenCard: (arg: boolean) => void;
@@ -17,14 +16,29 @@ interface IModalCardProps {
   getCommentsById: (id: number) => TComment[];
   removeComment: (id: number) => void;
   renameCard: (id: number, title: string) => void;
+  changeComment: (id: number, body: string) => void;
+  addDescription: (data: TDescription) => void;
+  removeDescription: (id: number) => void;
+  getDescriptionById: (id: number) => TDescription | any;
+  getColumnById: (id: number) => TBoardColumn | any;
+  changeDescription: (id: number, body: string) => void;
 }
 
+ModalCard.defaulProps = {
+  dataCard: {
+    id: -1,
+    title: '',
+    columnId: -1,
+  },
+};
 export default function ModalCard(props: IModalCardProps) {
   const [commentVal, setCommentVal] = useState('');
-  const [newCardTitle, setNewCardTitle] = useState('');
-  const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const [descrText, setDescrText] = useState('');
+  const comments = props.getCommentsById(props.dataCard.id);
+  const description = props.getDescriptionById(props.dataCard.id);
+  const columnInfo = props.getColumnById(props.dataCard.columnId);
 
-  console.log('newCardTitle', newCardTitle);
+  console.log('description', description);
 
   function submitComment(e: FormEvent) {
     e.preventDefault();
@@ -39,122 +53,118 @@ export default function ModalCard(props: IModalCardProps) {
       setCommentVal('');
     }
   }
-  function onBlurHandler(e: React.SyntheticEvent) {
-    if (props.dataCard) {
-      if (newCardTitle.length === 0) {
-        if (titleTextareaRef.current) {
-          titleTextareaRef.current.focus();
-        }
-        return false;
+  function submitDescription(e: FormEvent) {
+    e.preventDefault();
+    if (descrText.length > 0) {
+      if (props.dataCard) {
+        props.addDescription({
+          id: Date.now(),
+          body: descrText,
+          cardId: props.dataCard.id,
+        });
       }
-      if (newCardTitle !== props.dataCard.title && newCardTitle.length !== 0) {
-        props.renameCard(props.dataCard.id, newCardTitle);
-      }
+      setDescrText('');
     }
   }
-  function onKeyHandler(e: KeyboardEvent) {
-    if (e.key === 'Enter' && props.dataCard) {
-      e.preventDefault();
-      if (newCardTitle.length === 0) {
-        if (titleTextareaRef.current) {
-          titleTextareaRef.current.focus();
-        }
-        return false;
-      }
-      if (newCardTitle !== props.dataCard.title) {
-        props.renameCard(props.dataCard.id, newCardTitle);
-        if (titleTextareaRef.current) {
-          titleTextareaRef.current.blur();
-        }
-      } else {
-        if (titleTextareaRef.current) {
-          titleTextareaRef.current.blur();
-        }
-      }
-    }
-  }
-  if (props.dataCard && props.isOpen) {
-    const comments = props.getCommentsById(props.dataCard.id);
-    return (
-      <div className={props.isOpen ? 'modal active' : 'modal'}>
-        <div className="modal__wrapper">
-          <div>
-            <ModalCardTitle>{props.dataCard.title}</ModalCardTitle>
-            <ModalCardTitleTextarea
-              value={newCardTitle}
-              name=""
-              rows={1}
-              ref={titleTextareaRef}
-              onChange={(e) => {
-                setNewCardTitle(e.target.value);
-              }}
-              onBlur={onBlurHandler}
-              onKeyPress={onKeyHandler}
+
+  return (
+    <div className={props.isOpen ? 'modal active' : 'modal'}>
+      <div className="modal__wrapper">
+        <div>
+          <ModalCardTitle
+            dataCard={props.dataCard}
+            renameCard={props.renameCard}
+          />
+          <p>{`Inside a column ${columnInfo.title}`}</p>
+          <ModalCardAuthor>
+            Author: <span>{props.userName}</span>
+          </ModalCardAuthor>
+          <ModalCardCloseBtn
+            onClick={() => {
+              document.body.style.overflow = '';
+              props.setIsOpenCard(false);
+            }}
+          >
+            X
+          </ModalCardCloseBtn>
+        </div>
+        <hr />
+        <div>
+          <ModalCardSectionTitle>Description:</ModalCardSectionTitle>
+          <DescrWrapper>
+            {!isEmpty(description) && (
+              <Description
+                data={description}
+                removeDescription={props.removeDescription}
+                changeDescription={props.changeDescription}
+              />
+            )}
+          </DescrWrapper>
+          {isEmpty(description) && (
+            <AddForm
+              submitHandler={submitDescription}
+              textAreaValue={descrText}
+              changeTextValue={setDescrText}
+              buttonValue="Add description"
             />
-            <p>{`Inside a column ${props.dataCard.columnId}`}</p>
-            <button
-              onClick={() => {
-                document.body.style.overflow = '';
-                props.setIsOpenCard(false);
-              }}
-            >
-              X
-            </button>
-          </div>
-          <hr />
-          <div>
-            <p>Description:</p>
-          </div>
-          <hr />
-          <div>
-            <p>Comments:</p>
-            <ul>
-              {comments.map((item) => {
-                return (
-                  <li key={item.id}>
-                    <p>{item.body}</p>
-                    <p>Author: {props.userName}</p>
-                    <button onClick={() => props.removeComment(item.id)}>
-                      X
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-            <div>
-              <form onSubmit={submitComment}>
-                <input
-                  type="text"
-                  name="comment"
-                  value={commentVal}
-                  onChange={(e) => setCommentVal(e.target.value)}
+          )}
+        </div>
+        <hr />
+        <div>
+          <ModalCardSectionTitle>Comments:</ModalCardSectionTitle>
+          <CommentsList>
+            {comments.map((item) => {
+              return (
+                <StyledComment
+                  key={item.id}
+                  data={item}
+                  userName={props.userName}
+                  removeComment={props.removeComment}
+                  changeComment={props.changeComment}
                 />
-                <button>Add comment</button>
-              </form>
-            </div>
-          </div>
+              );
+            })}
+          </CommentsList>
+          <AddForm
+            submitHandler={submitComment}
+            textAreaValue={commentVal}
+            changeTextValue={setCommentVal}
+            buttonValue="Add comment"
+          />
         </div>
       </div>
-    );
-  } else {
-    return null;
-  }
+    </div>
+  );
 }
-
-const ModalCardTitle = styled.h2`
-  display: none;
+const ModalCardCloseBtn = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 10px;
 `;
-const ModalCardTitleTextarea = styled.textarea`
-  font-family: inherit;
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 1.2;
-  background: transparent;
-  border: 0;
-  resize: none;
-
-  &:focus {
-    border: 1px solid var(--lightgray);
-    background-color: var(--white);
+const CommentsList = styled.ul`
+  margin-bottom: 20px;
+  &:empty {
+    margin-bottom: 0;
+  }
+`;
+const ModalCardSectionTitle = styled.h4`
+  margin-bottom: 15px;
+`;
+const StyledComment = styled(Comment)`
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+const ModalCardAuthor = styled.p`
+  font-size: 12px;
+  span {
+    font-weight: bold;
+  }
+`;
+const DescrWrapper = styled.div`
+  margin-bottom: 20px;
+  &:empty {
+    margin-bottom: 0;
   }
 `;
