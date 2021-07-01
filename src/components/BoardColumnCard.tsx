@@ -1,18 +1,40 @@
-import { useState } from 'react';
 import styled from 'styled-components';
-import { TColumnCard } from './BoardColumn';
+import { TCard, TComment } from '../App';
 
-type TBoardColumnCardProps = {
-  data: {
-    id: number;
-    title: string;
-    columnId: number;
-  };
+interface IBoardColumnCardProps {
+  data: TCard;
   removeCard: (id: number) => void;
-  setDataCardModal: (data: TColumnCard) => void;
-  openCardModal: (arg: boolean) => void;
+  openModal: (arg: boolean) => void;
+  setDataCardModal: (data: TCard) => void;
+  getCommentsById: (id: number) => TComment[];
   className?: string;
-};
+}
+
+export default function BoardColumnCard(props: IBoardColumnCardProps) {
+  const commentsCount = props.getCommentsById(props.data.id).length;
+  function openModal() {
+    props.setDataCardModal(props.data);
+
+    props.openModal(true);
+    document.body.style.overflow = 'hidden';
+  }
+  return (
+    <CardItem className={props.className}>
+      <CardItemLink onClick={openModal}></CardItemLink>
+      <CardItemRemove onClick={() => props.removeCard(props.data.id)}>
+        X
+      </CardItemRemove>
+      <CardItemTitleWrap>
+        <p>{props.data.title}</p>
+      </CardItemTitleWrap>
+      <CardItemInfoWrap>
+        <CardItemInfoElem>
+          💬 <span>{commentsCount}</span>
+        </CardItemInfoElem>
+      </CardItemInfoWrap>
+    </CardItem>
+  );
+}
 
 const CardItemRemove = styled.button`
   position: absolute;
@@ -54,27 +76,3 @@ const CardItemLink = styled.a`
   top: 0;
   z-index: 1;
 `;
-export default function BoardColumnCard(props: TBoardColumnCardProps) {
-  const [commentCount, setCommentCount] = useState(0);
-  return (
-    <CardItem className={props.className}>
-      <CardItemLink
-        onClick={() => {
-          props.setDataCardModal(props.data);
-          props.openCardModal(true);
-        }}
-      ></CardItemLink>
-      <CardItemRemove onClick={() => props.removeCard(props.data.id)}>
-        X
-      </CardItemRemove>
-      <CardItemTitleWrap>
-        <p>{props.data.title}</p>
-      </CardItemTitleWrap>
-      <CardItemInfoWrap>
-        <CardItemInfoElem>
-          💬 <span>{commentCount}</span>
-        </CardItemInfoElem>
-      </CardItemInfoWrap>
-    </CardItem>
-  );
-}
