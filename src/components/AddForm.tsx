@@ -28,5 +28,3 @@ const AddFormTextarea = styled(TextareaAutosize)`
   margin-bottom: 10px;
   resize: none;
 `;
-
-const Form = styled.form``;

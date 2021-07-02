@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import styled from 'styled-components';
 import { TBoardColumn, TCard, TComment, TDescription } from '../App';
 import ModalCardTitle from './ModalCardTitle';
@@ -19,26 +19,17 @@ interface IModalCardProps {
   changeComment: (id: number, body: string) => void;
   addDescription: (data: TDescription) => void;
   removeDescription: (id: number) => void;
-  getDescriptionById: (id: number) => TDescription | any;
-  getColumnById: (id: number) => TBoardColumn | any;
+  getDescriptionById: (id: number) => TDescription;
+  getColumnById: (id: number) => TBoardColumn;
   changeDescription: (id: number, body: string) => void;
 }
 
-ModalCard.defaulProps = {
-  dataCard: {
-    id: -1,
-    title: '',
-    columnId: -1,
-  },
-};
 export default function ModalCard(props: IModalCardProps) {
   const [commentVal, setCommentVal] = useState('');
   const [descrText, setDescrText] = useState('');
   const comments = props.getCommentsById(props.dataCard.id);
   const description = props.getDescriptionById(props.dataCard.id);
   const columnInfo = props.getColumnById(props.dataCard.columnId);
-
-  console.log('description', description);
 
   function submitComment(e: FormEvent) {
     e.preventDefault();
@@ -66,7 +57,6 @@ export default function ModalCard(props: IModalCardProps) {
       setDescrText('');
     }
   }
-
   return (
     <div className={props.isOpen ? 'modal active' : 'modal'}>
       <div className="modal__wrapper">

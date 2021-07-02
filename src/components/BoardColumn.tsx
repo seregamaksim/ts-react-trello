@@ -31,6 +31,7 @@ export default function BoardColumn(props: IBoardColumnProps) {
         columnId: props.data.id,
       });
       setNewCardValue('');
+      setIsAddCardPopupOpen(false);
     }
   }
 

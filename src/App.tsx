@@ -34,21 +34,39 @@ const initialStateColumns = [
 export default function App() {
   const [userName, setUserName] = useState('');
   const localUserName = localStorage.getItem('userName') || userName;
-  // const localBoardColumns = JSON.parse(
-  //   localStorage.getItem('boardColumns') || '[]'
-  // );
-  // const [boardColumns, setBoardColumns] = useState<TBoardColumn[]>(
-  //  localBoardColumns.lenght > 0 ? localBoardColumns : initialStateColumns
-  // );
-  const [boardColumns, setBoardColumns] =
-    useState<TBoardColumn[]>(initialStateColumns);
-  const [cards, setCards] = useState<TCard[]>([]);
+  const localBoardColumns = JSON.parse(
+    localStorage.getItem('boardColumns') || '[]'
+  );
+  const localCards = JSON.parse(localStorage.getItem('cards') || '[]');
+  const localDescriptions = JSON.parse(
+    localStorage.getItem('descriptions') || '[]'
+  );
+  const localComments = JSON.parse(localStorage.getItem('comments') || '[]');
+
+  const [boardColumns, setBoardColumns] = useState<TBoardColumn[]>(
+    localBoardColumns.length > 0 ? localBoardColumns : initialStateColumns
+  );
+  const [cards, setCards] = useState<TCard[]>(
+    localCards.length > 0 ? localCards : []
+  );
   const [isOpenCard, setIsOpenCard] = useState(false);
   const [dataCard, setDataCard] = useState<TCard | null>(null);
-  const [comments, setComments] = useState<TComment[]>([]);
-  const [descriptions, setDescriptions] = useState<TDescription[]>([]);
+  const [comments, setComments] = useState<TComment[]>(
+    localComments.length > 0 ? localComments : []
+  );
+  const [descriptions, setDescriptions] = useState<TDescription[]>(
+    localDescriptions.length > 0 ? localDescriptions : []
+  );
+  // const [boardColumns, setBoardColumns] =
+  //   useState<TBoardColumn[]>(initialStateColumns);
+  // const [cards, setCards] = useState<TCard[]>([]);
+  // const [comments, setComments] = useState<TComment[]>([]);
+  // const [descriptions, setDescriptions] = useState<TDescription[]>([]);
 
-  // localStorage.setItem('boardColumns', JSON.stringify(boardColumns));
+  localStorage.setItem('boardColumns', JSON.stringify(boardColumns));
+  localStorage.setItem('cards', JSON.stringify(cards));
+  localStorage.setItem('descriptions', JSON.stringify(descriptions));
+  localStorage.setItem('comments', JSON.stringify(comments));
 
   function addColumn(data: TBoardColumn): void {
     const newColumns = boardColumns.concat(data);
@@ -58,11 +76,10 @@ export default function App() {
     const newColumns = boardColumns.filter((item) => item.id !== id);
     setBoardColumns(newColumns);
   }
-  function getColumnById(id: number): TBoardColumn | any {
-    const neededColumn = boardColumns.find((item) => item.id === id);
-    return neededColumn;
+  function getColumnById(id: number): TBoardColumn {
+    const neededColumn = boardColumns.filter((item) => item.id === id);
+    return neededColumn[0];
   }
-
   function removeCard(id: number): void {
     let newCards = cards.filter((item) => item.id !== id);
     setCards(newCards);
@@ -122,9 +139,9 @@ export default function App() {
     const newDescriptions = descriptions.filter((item) => item.id !== id);
     setDescriptions(newDescriptions);
   }
-  function getDescriptionById(id: number): TDescription | any {
-    const neededDescription = descriptions.find((item) => item.cardId === id);
-    return neededDescription;
+  function getDescriptionById(id: number): TDescription {
+    const neededDescription = descriptions.filter((item) => item.cardId === id);
+    return neededDescription[0];
   }
   function changeDescription(id: number, body: string): void {
     let newDescriptions = [...descriptions];
@@ -162,6 +179,7 @@ export default function App() {
         getCommentsById={getCommentsById}
         renameColumn={renameColumn}
       />
+
       {isOpenCard && dataCard && (
         <ModalCard
           dataCard={dataCard}
