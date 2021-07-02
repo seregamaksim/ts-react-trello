@@ -3,13 +3,13 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { TDescription } from '../App';
 import { useRef, useState } from 'react';
 
-interface IDescription {
+interface IDescriptionProps {
   data: TDescription;
   removeDescription: (id: number) => void;
   changeDescription: (id: number, body: string) => void;
 }
 
-export default function Description(props: IDescription) {
+export default function Description(props: IDescriptionProps) {
   const [newDescrVal, setNewDescrVal] = useState(props.data.body);
   const textTextareaRef = useRef<HTMLTextAreaElement>(null);
 

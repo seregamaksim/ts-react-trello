@@ -1,14 +1,15 @@
 import { FormEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from 'styled-components';
-interface IAddForm {
+
+interface IAddFormProps {
   submitHandler: (e: FormEvent) => void;
   textAreaValue: string;
   changeTextValue: (text: string) => void;
   buttonValue: string;
 }
 
-export default function AddForm(props: IAddForm) {
+export default function AddForm(props: IAddFormProps) {
   return (
     <div>
       <form onSubmit={props.submitHandler}>

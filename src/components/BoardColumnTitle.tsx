@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { TBoardColumn } from '../App';
 import TextareaAutosize from 'react-textarea-autosize';
 
-interface IBoardColumnTitle {
+interface IBoardColumnTitleProps {
   data: TBoardColumn;
   renameColumn: (id: number, title: string) => void;
 }
 
-export default function BoardColumnTitle(props: IBoardColumnTitle) {
+export default function BoardColumnTitle(props: IBoardColumnTitleProps) {
   const [newColumnTitle, setNewColumnTitle] = useState(props.data.title);
   const titleTextareaRef = useRef<HTMLTextAreaElement>(null);
 

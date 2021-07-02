@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { TComment } from '../App';
 import TextareaAutosize from 'react-textarea-autosize';
 
-interface IComment {
+interface ICommentProps {
   data: TComment;
   userName: string;
   removeComment: (id: number) => void;
@@ -11,7 +11,7 @@ interface IComment {
   className?: string;
 }
 
-export default function Comment(props: IComment) {
+export default function Comment(props: ICommentProps) {
   const [commentText, setCommentText] = useState(props.data.body);
   const textTextareaRef = useRef<HTMLTextAreaElement>(null);
   function onBlurHandler(e: React.SyntheticEvent) {
