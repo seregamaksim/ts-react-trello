@@ -37,18 +37,6 @@ export default function Board(props: IBoardProps) {
               />
             );
           })}
-        {/* {(localBoardColumns || props.boardColumns) &&
-          props.boardColumns.map((item) => {
-            return (
-              <StyledBoardColumn
-                key={item.id}
-                data={item}
-                removeColumn={props.removeColumn}
-                setDataCardModal={setDataCard}
-                openCardModal={setIsOpenCard}
-              />
-            );
-          })} */}
       </BoardColumns>
 
       <AddColumnBtn addHandle={props.addColumn} />

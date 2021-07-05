@@ -23,7 +23,9 @@ interface IModalCardProps {
   getColumnById: (id: number) => TBoardColumn;
   changeDescription: (id: number, body: string) => void;
 }
-
+interface ModalProps {
+  readonly $isOpen: boolean;
+}
 export default function ModalCard(props: IModalCardProps) {
   const [commentVal, setCommentVal] = useState('');
   const [descrText, setDescrText] = useState('');
@@ -58,7 +60,7 @@ export default function ModalCard(props: IModalCardProps) {
     }
   }
   return (
-    <div className={props.isOpen ? 'modal active' : 'modal'}>
+    <Modal $isOpen={props.isOpen}>
       <div className="modal__wrapper">
         <div>
           <ModalCardTitle
@@ -123,9 +125,13 @@ export default function ModalCard(props: IModalCardProps) {
           />
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
+
+const Modal = styled.div.attrs<ModalProps>(({ $isOpen }) => ({
+  className: $isOpen ? 'modal active' : 'modal',
+}))<ModalProps>``;
 const ModalCardCloseBtn = styled.button`
   position: absolute;
   right: 10px;

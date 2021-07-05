@@ -23,6 +23,12 @@ export type TDescription = {
   body: string;
   cardId: number;
 };
+enum LOCALSTORAGE_KEYS {
+  userName = 'userName',
+  boardColumns = 'boardColumns',
+  descriptions = 'descriptions',
+  comments = 'comments',
+}
 
 const initialStateColumns = [
   { id: 0, title: 'TODO' },
@@ -33,15 +39,18 @@ const initialStateColumns = [
 
 export default function App() {
   const [userName, setUserName] = useState('');
-  const localUserName = localStorage.getItem('userName') || userName;
+  const localUserName =
+    localStorage.getItem(LOCALSTORAGE_KEYS.userName) || userName;
   const localBoardColumns = JSON.parse(
-    localStorage.getItem('boardColumns') || '[]'
+    localStorage.getItem(LOCALSTORAGE_KEYS.boardColumns) || '[]'
   );
   const localCards = JSON.parse(localStorage.getItem('cards') || '[]');
   const localDescriptions = JSON.parse(
-    localStorage.getItem('descriptions') || '[]'
+    localStorage.getItem(LOCALSTORAGE_KEYS.descriptions) || '[]'
   );
-  const localComments = JSON.parse(localStorage.getItem('comments') || '[]');
+  const localComments = JSON.parse(
+    localStorage.getItem(LOCALSTORAGE_KEYS.comments) || '[]'
+  );
 
   const [boardColumns, setBoardColumns] = useState<TBoardColumn[]>(
     localBoardColumns.length > 0 ? localBoardColumns : initialStateColumns
@@ -57,11 +66,6 @@ export default function App() {
   const [descriptions, setDescriptions] = useState<TDescription[]>(
     localDescriptions.length > 0 ? localDescriptions : []
   );
-  // const [boardColumns, setBoardColumns] =
-  //   useState<TBoardColumn[]>(initialStateColumns);
-  // const [cards, setCards] = useState<TCard[]>([]);
-  // const [comments, setComments] = useState<TComment[]>([]);
-  // const [descriptions, setDescriptions] = useState<TDescription[]>([]);
 
   localStorage.setItem('boardColumns', JSON.stringify(boardColumns));
   localStorage.setItem('cards', JSON.stringify(cards));
@@ -69,8 +73,7 @@ export default function App() {
   localStorage.setItem('comments', JSON.stringify(comments));
 
   function addColumn(data: TBoardColumn): void {
-    const newColumns = boardColumns.concat(data);
-    setBoardColumns(newColumns);
+    setBoardColumns([...boardColumns, data]);
   }
   function removeColumn(id: number): void {
     const newColumns = boardColumns.filter((item) => item.id !== id);
@@ -85,27 +88,25 @@ export default function App() {
     setCards(newCards);
   }
   function addCard(data: TCard): void {
-    const newCards = cards.concat(data);
-    setCards(newCards);
+    setCards([...cards, data]);
   }
   function getCardsByIdColumn(id: number): TCard[] {
     const neededCards = cards.filter((item) => item.columnId === id);
     return neededCards;
   }
   function addComment(comment: TComment): void {
-    const newComments = comments.concat(comment);
-    setComments(newComments);
+    setComments([...comments, comment]);
   }
   function removeComment(id: number): void {
     const newComments = comments.filter((item) => item.id !== id);
     setComments(newComments);
   }
   function changeComment(id: number, body: string): void {
-    let newComments = [...comments];
-    newComments.forEach((item) => {
+    const newComments = comments.map((item) => {
       if (item.id === id) {
         item.body = body;
       }
+      return item;
     });
     setComments(newComments);
   }
@@ -114,26 +115,25 @@ export default function App() {
     return neededComments;
   }
   function renameColumn(id: number, title: string): void {
-    let newBoardColumns = [...boardColumns];
-    newBoardColumns.forEach((item) => {
+    const newBoardColumns = boardColumns.map((item) => {
       if (item.id === id) {
         item.title = title;
       }
+      return item;
     });
     setBoardColumns(newBoardColumns);
   }
   function renameCard(id: number, title: string) {
-    let newCards = [...cards];
-    newCards.forEach((item) => {
+    const newCards = cards.map((item) => {
       if (item.id === id) {
         item.title = title;
       }
+      return item;
     });
     setCards(newCards);
   }
   function addDescription(description: TDescription): void {
-    const newDescriptions = descriptions.concat(description);
-    setDescriptions(newDescriptions);
+    setDescriptions([...descriptions, description]);
   }
   function removeDescription(id: number): void {
     const newDescriptions = descriptions.filter((item) => item.id !== id);
@@ -144,11 +144,11 @@ export default function App() {
     return neededDescription[0];
   }
   function changeDescription(id: number, body: string): void {
-    let newDescriptions = [...descriptions];
-    newDescriptions.forEach((item) => {
+    const newDescriptions = descriptions.map((item) => {
       if (item.id === id) {
         item.body = body;
       }
+      return item;
     });
     setDescriptions(newDescriptions);
   }

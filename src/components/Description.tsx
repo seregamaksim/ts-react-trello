@@ -26,7 +26,7 @@ export default function Description(props: IDescriptionProps) {
   }
   function onKeyHandler(e: React.KeyboardEvent) {
     if (e.key === 'Enter') {
-      e.preventDefault();
+      // e.preventDefault();
       if (newDescrVal.length === 0) {
         if (textTextareaRef.current) {
           textTextareaRef.current.focus();
@@ -50,6 +50,7 @@ export default function Description(props: IDescriptionProps) {
     <DescriptionItem>
       <DescriptionText>{props.data.body}</DescriptionText>
       <DescriptionTextarea
+        ref={textTextareaRef}
         value={newDescrVal}
         onChange={(e) => setNewDescrVal(e.target.value)}
         onBlur={onBlurHandler}
